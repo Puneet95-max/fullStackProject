@@ -1,30 +1,40 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import DropDownComponent from '@/components/DropDownComponent/DropDownComponent';
 import ProjectTypeFixedComponent from '@/components/ProjectTypeFixedComponet/ProjectTypeFixedComponent';
-import ViewProjectsConatainer from '../ViewProjectsContainer/ViewProjectsConatainer';
 import ProjectTypeHourlyComponent from '@/components/ProjectTypeHourlyComponent/ProjectTypeHourlyComponent';
+import { ProjectDetailsContext } from '@/contexts/ProjectDetailsContext';
 
 function AddProjectContainer() {
 
-    const ProjectTypeOptions = [
-        { value: 'Fixed', label: 'Fixed', id: 1 },
-        { value: 'Hourly', label: 'Hourly', id: 2 },
-    ];
+    const { projectTypeDetails,
+        GetProjectTypeDetails,
+        GetManagersDetails,
+        managersDetails } = useContext(ProjectDetailsContext);
 
-    const [projectTypeId, setProjectTypeId] = useState(null);
+    useEffect(() => {
+        GetProjectTypeDetails();
+        GetManagersDetails();
+    }, [])
+
+    const [projectType, setProjectType] = useState(null);
     const [projectName, setProjectName] = useState("");
     const [clientName, setClientName] = useState("");
+    const [managers, setManagers] = useState([]);
 
-    const handleIdChange = (id) => {
-        setProjectTypeId(id);
+    const handleProjectTypeChange = (data) => {
+        setProjectType(data);
     };
+
+    const handleManagerChange = (data) => {
+        setManagers(data);
+    }
 
     const handleProjectNameChange = (e) => {
         setProjectName(e.target.value);
     }
 
     const handleClientNameChange = (e) => {
-        setClientName(e.target.value)
+        setClientName(e.target.value);
     }
 
     return (
@@ -46,26 +56,35 @@ function AddProjectContainer() {
             </div>
 
             <div className="mb-4">
-                <label className="block mb-2">Project Type</label>
-                <DropDownComponent options={ProjectTypeOptions} setId={handleIdChange} />
+                <label className="block mb-2">Select Managers</label>
+                <DropDownComponent options={managersDetails} setType={handleManagerChange} multi={true} />
             </div>
 
-            {projectTypeId === 1 && (
+            <div className="mb-4">
+                <label className="block mb-2">Project Type</label>
+                <DropDownComponent options={projectTypeDetails} setType={handleProjectTypeChange} multi={false} />
+            </div>
+
+            {projectType === "Fixed" && (
                 <div className="mb-8">
                     <h2 className="text-lg font-semibold mb-2">Fixed Project Details</h2>
                     <ProjectTypeFixedComponent
                         Pname={projectName}
                         Cname={clientName}
+                        manager={managers}
+                        Ptype={projectType}
                     />
                 </div>
             )}
 
-            {projectTypeId === 2 && (
+            {projectType === "Hourly" && (
                 <div className="mb-8">
                     <h2 className="text-lg font-semibold mb-2">Hourly Project Details</h2>
                     <ProjectTypeHourlyComponent
                         Pname={projectName}
                         Cname={clientName}
+                        manager={managers}
+                        Ptype={projectType}
                     />
                 </div>
             )}

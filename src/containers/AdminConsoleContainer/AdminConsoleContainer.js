@@ -1,12 +1,12 @@
 "use client"
-import React, { useState , useContext , useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import AddProjectContainer from '../AddProjectContainer/AddProjectContainer';
 import ViewProjectsConatainer from '../ViewProjectsContainer/ViewProjectsConatainer';
 import Link from 'next/link'
 
 function AdminConsoleContainer({ id }) {
     const [selectedId, setSelectedId] = useState(id);
-  
+
     return (
         <main className="h-screen w-full flex">
             {/* Sidebar */}
@@ -33,12 +33,13 @@ function AdminConsoleContainer({ id }) {
 
             </div>
 
-            {/* Content */}
             <div className="w-5/6 ml-auto overflow-y-auto p-8">
-                {selectedId === 1 &&
+                {
+                    selectedId === 1 &&
                     <AddProjectContainer />
                 }
-                {selectedId === 2 &&
+                {
+                    selectedId === 2 &&
                     <ViewProjectsConatainer />
                 }
             </div>

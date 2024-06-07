@@ -2,13 +2,14 @@ import React, { useContext, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ProjectDetailsContext } from '@/contexts/ProjectDetailsContext';
+import { format } from 'date-fns';
 
-const ProjectTypeHourlyComponent = ({ Pname, Cname }) => {
+const ProjectTypeHourlyComponent = ({ Pname, Cname, Ptype, manager }) => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [hourlyLimit, setHourlyLimit] = useState('');
 
-    const { hData  , setHData} = useContext(ProjectDetailsContext);
+    const { hData, setHData, CreateProject } = useContext(ProjectDetailsContext);
 
     const handleStartDateChange = (date) => {
         setStartDate(date);
@@ -26,14 +27,15 @@ const ProjectTypeHourlyComponent = ({ Pname, Cname }) => {
         const data = {
             project_name: Pname,
             client_name: Cname,
-            startDate: startDate,
-            endDate: endDate,
-            hourlyLimit: hourlyLimit
+            hourly_start_time: format(startDate, 'yyyy-MM-dd'),
+            hourly_end_time: format(endDate, 'yyyy-MM-dd'),
+            hourly_project_limit: parseInt(hourlyLimit),
+            managers: manager,
+            project_type: Ptype,
+            milestones: [],
         };
-        setHData(data); // Save data into hData
+        CreateProject(data);
     };
-
-    console.log("hData" , hData);
 
     return (
         <div className="container mx-auto p-6 border-2">

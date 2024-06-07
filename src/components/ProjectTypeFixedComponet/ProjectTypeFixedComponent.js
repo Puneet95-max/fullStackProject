@@ -2,23 +2,23 @@ import React, { useContext, useState, useEffect } from 'react';
 import Select from 'react-select';
 import StartDateAndEndDateComponent from '../StartDateAndEndDateComponent/StartDateAndEndDataComponent';
 import { ProjectDetailsContext } from '@/contexts/ProjectDetailsContext';
-import { useRouter } from 'next/navigation'
+import { format } from 'date-fns';
 
-const ProjectTypeFixedComponent = ({ Pname, Cname }) => {
-  const router = useRouter();
+const ProjectTypeFixedComponent = ({ Pname, Cname, manager, Ptype }) => {
+  const [items, setItems] = useState([{ description: '', start_date: null, end_date: null, status: '' }]);
+  const { 
+    milstoneStatusData,
+    GetMilstoneOptionsData,
+    CreateProject,
+  } = useContext(ProjectDetailsContext);
 
-  const [items, setItems] = useState([{ description: '', startDate: null, endDate: null, status: '' }]);
-  const { fData, setFData } = useContext(ProjectDetailsContext);
 
-
-  const statusOptions = [
-    { value: 'Pending', label: 'Pending' },
-    { value: 'In Progress', label: 'In Progress' },
-    { value: 'Completed', label: 'Completed' },
-  ];
+  useEffect(() => {
+    GetMilstoneOptionsData();
+  }, [])
 
   const addMoreFields = () => {
-    setItems([...items, { description: '', startDate: null, endDate: null, status: '' }]);
+    setItems([...items, { description: '', start_date: null, end_date: null, status: '' }]);
   };
 
   const handleDescriptionChange = (index, description) => {
@@ -29,13 +29,13 @@ const ProjectTypeFixedComponent = ({ Pname, Cname }) => {
 
   const handleStartDateChange = (index, date) => {
     const newItems = [...items];
-    newItems[index].startDate = date
+    newItems[index].start_date = date ? format(date, 'yyyy-MM-dd') : null;
     setItems(newItems);
   };
 
   const handleEndDateChange = (index, date) => {
     const newItems = [...items];
-    newItems[index].endDate = date
+    newItems[index].end_date = date ? format(date, 'yyyy-MM-dd') : null;
     setItems(newItems);
   };
 
@@ -51,18 +51,15 @@ const ProjectTypeFixedComponent = ({ Pname, Cname }) => {
   };
 
   const handleSave = () => {
-    setFData({
+    const data = {
       project_name: Pname,
       client_name: Cname,
-      project_details: items,
-    });
-
-    // if(!fData){
-    //   router.push('/admin-console/view-projects');
-    // }
+      milestones: items,
+      managers: manager,
+      project_type: Ptype
+    };
+      CreateProject(data);
   };
-
-  console.log("fData" , fData);
 
 
   return (
@@ -80,17 +77,17 @@ const ProjectTypeFixedComponent = ({ Pname, Cname }) => {
             />
           </div>
           <StartDateAndEndDateComponent
-            startDate={item.startDate}
-            endDate={item.endDate}
+            startDate={item.start_date}
+            endDate={item.end_date}
             handleStartDateChange={(date) => handleStartDateChange(index, date)}
             handleEndDateChange={(date) => handleEndDateChange(index, date)}
           />
           <div className="mb-4">
             <label className="block mt-5 py-2">Status:</label>
             <Select
-              value={statusOptions.find((option) => option.value === item.status)}
+              value={milstoneStatusData && milstoneStatusData.find((option) => option.value === item.status)}
               onChange={(selectedOption) => handleStatusChange(index, selectedOption)}
-              options={statusOptions}
+              options={milstoneStatusData}
               className="w-full"
             />
           </div>
