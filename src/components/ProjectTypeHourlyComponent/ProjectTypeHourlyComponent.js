@@ -4,7 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { ProjectDetailsContext } from '@/contexts/ProjectDetailsContext';
 import { format } from 'date-fns';
 
-const ProjectTypeHourlyComponent = ({ Pname, Cname, Ptype, manager }) => {
+const ProjectTypeHourlyComponent = ({ Pname, Cname, Ptype, manager , teamLeads , employees}) => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [hourlyLimit, setHourlyLimit] = useState('');
@@ -33,6 +33,8 @@ const ProjectTypeHourlyComponent = ({ Pname, Cname, Ptype, manager }) => {
             managers: manager,
             project_type: Ptype,
             milestones: [],
+            employee: employees,
+            team_lead: teamLeads,
         };
         CreateProject(data);
     };
