@@ -4,9 +4,9 @@ import StartDateAndEndDateComponent from '../StartDateAndEndDateComponent/StartD
 import { ProjectDetailsContext } from '@/contexts/ProjectDetailsContext';
 import { format } from 'date-fns';
 
-const ProjectTypeFixedComponent = ({ Pname, Cname, manager, Ptype }) => {
+const ProjectTypeFixedComponent = ({ Pname, Cname, manager, Ptype, teamLeads, employees }) => {
   const [items, setItems] = useState([{ description: '', start_date: null, end_date: null, status: '' }]);
-  const { 
+  const {
     milstoneStatusData,
     GetMilstoneOptionsData,
     CreateProject,
@@ -56,9 +56,11 @@ const ProjectTypeFixedComponent = ({ Pname, Cname, manager, Ptype }) => {
       client_name: Cname,
       milestones: items,
       managers: manager,
-      project_type: Ptype
+      project_type: Ptype,
+      employee: employees,
+      team_lead: teamLeads
     };
-      CreateProject(data);
+    CreateProject(data);
   };
 
 
