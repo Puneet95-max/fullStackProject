@@ -1,12 +1,15 @@
 "use client"
+import LoaderComponent from '@/components/LoaderComponent/LoaderComponent';
 import React, { useState, useEffect, useContext } from 'react';
 
 function Test() {
   const [students, setStudents] = useState([]);
- 
+
   return (
     <main>
-      <h1>Students</h1>
+      <h1>
+        <LoaderComponent />
+      </h1>
 
     </main>
   );

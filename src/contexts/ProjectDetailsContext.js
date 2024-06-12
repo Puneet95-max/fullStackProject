@@ -20,7 +20,6 @@ const initialState = {
     setMilstoneStatusData: () => { },
     GetMilstoneOptionsData: () => { },
     CreateProject: (data) => { },
-    loginAPI: (data) => { },
 }
 
 export const ProjectDetailsContext = createContext(initialState);
@@ -135,24 +134,6 @@ export default function ProjectDetailsContextProvider({ children }) {
         }
     };
 
-    const loginAPI = async (data) => {
-        const url = 'http://127.0.0.1:8000/api/login/'
-        try {
-            const response = await axios.post(url, data);
-            if (response.status === 200) {
-                alert("user logined");
-                const  token  = response.data.token;
-                sessionStorage.setItem('token', token);
-                router.push('/admin-console/view-projects')
-            } else {
-                alert("user not logined")
-            }
-
-        } catch (error) {
-            throw error;
-        }
-    };
-
 
     return (
         <ProjectDetailsContext.Provider
@@ -171,7 +152,6 @@ export default function ProjectDetailsContextProvider({ children }) {
                 setMilstoneStatusData,
                 GetMilstoneOptionsData,
                 CreateProject,
-                loginAPI,
             }}
         >
             {children}

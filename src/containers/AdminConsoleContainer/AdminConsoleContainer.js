@@ -1,12 +1,23 @@
 "use client"
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import AddProjectContainer from '../AddProjectContainer/AddProjectContainer';
 import ViewProjectsConatainer from '../ViewProjectsContainer/ViewProjectsConatainer';
 import Link from 'next/link'
 import AddStaffContainer from '../AddStaffContainer/AddStaffContainer';
+import ReportContainer from '../ReportContainer./ReportContainer';
 
 function AdminConsoleContainer({ id }) {
     const [selectedId, setSelectedId] = useState(id);
+    const [userId, setUserID] = useState(null);
+
+    useEffect(() => {
+        const userData = sessionStorage.getItem('userData');
+        if (userData) {
+          const parsedUserData = JSON.parse(userData);
+          const userID = parsedUserData.user.id;
+          setUserID(userID);
+        }
+      }, []);
 
     return (
         <main className="h-screen w-full flex">
@@ -34,6 +45,13 @@ function AdminConsoleContainer({ id }) {
                         Add Staff
                     </div>
                 </Link>
+                <Link href={`/report/${userId}`}>
+                    <div
+                        className={`py-4 flex justify-center cursor-pointer ${selectedId === 4 ? 'bg-white text-blue-500' : ''}`}
+                        onClick={() => setSelectedId(4)}>
+                        Send Report
+                    </div>
+                </Link>
 
             </div>
 
@@ -49,6 +67,10 @@ function AdminConsoleContainer({ id }) {
                 {
                     selectedId === 3 &&
                     <AddStaffContainer />
+                }
+                {
+                    selectedId === 4 &&
+                    <ReportContainer id={userId} />
                 }
             </div>
         </main>

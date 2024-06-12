@@ -1,11 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { ProjectDetailsContext } from '@/contexts/ProjectDetailsContext';
+import PopUpComponent from '@/components/PopUpComponent/PopUpComponent';
 
 function ViewProjectsContainer() {
     const { GetProjectDetails, ProjectDetailsData } = useContext(ProjectDetailsContext);
     const [selectedProject, setSelectedProject] = useState(null);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [selectedMilestone, setSelectedMilestone] = useState(null);
+    const [isMilestonePopupOpen, setIsMilestonePopupOpen] = useState(false);
 
     useEffect(() => {
         GetProjectDetails();
@@ -16,59 +19,77 @@ function ViewProjectsContainer() {
         setIsPopupOpen(true);
     };
 
+    const handleViewMilestones = (milestones) => {
+        setSelectedMilestone(milestones);
+        setIsMilestonePopupOpen(true);
+    };
+
+    const handleEditProject = (project) => {
+        // Handle edit project logic here
+        console.log('Edit project:', project);
+    };
+
+    const handleDeleteProject = (projectId) => {
+        // Handle delete project logic here
+        console.log('Delete project with id:', projectId);
+    };
+
     const closePopup = () => {
         setIsPopupOpen(false);
         setSelectedProject(null);
     };
 
+    const closeMilestonePopup = () => {
+        setIsMilestonePopupOpen(false);
+        setSelectedMilestone(null);
+    };
+
     const renderFixedProjectTable = () => {
         let serialNumber = 0;
 
-        // Find the maximum number of milestones any project has
-        const maxMilestones = ProjectDetailsData && Math.max(...ProjectDetailsData.map(project => project.milestones.length), 0);
-
         return (
-            <table className="w-full border-collapse border border-gray-300">
+            <table className="w-full border-collapse border border-gray-300 shadow-sm">
                 <thead>
-                    <tr>
-                        <th className="px-4 py-2 bg-gray-200">Serial No</th>
-                        <th className="px-4 py-2 bg-gray-200">Project ID</th>
-                        <th className="px-4 py-2 bg-gray-200">Project Name</th>
-                        <th className="px-4 py-2 bg-gray-200">Client Name</th>
-                        {[...Array(maxMilestones)].map((_, idx) => (
-                            <th key={idx} className="px-4 py-2 bg-gray-200">Milestone {idx + 1}</th>
-                        ))}
-                        <th className="px-4 py-2 bg-gray-200">Created Date</th>
-                        <th className="px-4 py-2 bg-gray-200">View Staff</th>
+                    <tr className="bg-gray-200 text-gray-700">
+                        <th className="px-4 py-2 border">Serial No</th>
+                        <th className="px-4 py-2 border">Project Name</th>
+                        <th className="px-4 py-2 border">Client Name</th>
+                        <th className="px-4 py-2 border">Created Date</th>
+                        <th className="px-4 py-2 border">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {ProjectDetailsData && ProjectDetailsData.map((project, index) => (
                         project.project_type === 'Fixed' && (
-                            <tr key={index} className="border-b border-gray-200">
-                                <td className="px-4 py-2">{++serialNumber}</td>
-                                <td className="px-4 py-2">{project.id}</td>
+                            <tr key={index} className="border-b hover:bg-gray-100">
+                                <td className="px-4 py-2 text-center">{++serialNumber}</td>
                                 <td className="px-4 py-2">{project.project_name}</td>
                                 <td className="px-4 py-2">{project.client_name}</td>
-                                {project.milestones.map((milestone, idx) => (
-                                    <td key={idx} className="px-4 py-2">
-                                        <div>Description: {milestone.description}</div>
-                                        <div>Status: {milestone.status}</div>
-                                        <div>Start: {format(new Date(milestone.start_date), 'dd-MM-yyyy')}</div>
-                                        <div>End: {format(new Date(milestone.end_date), 'dd-MM-yyyy')}</div>
-                                    </td>
-                                ))}
-                                {/* Fill remaining milestone columns if less than max */}
-                                {[...Array(maxMilestones - project.milestones.length)].map((_, idx) => (
-                                    <td key={`empty_${idx}`} className="px-4 py-2">-</td>
-                                ))}
                                 <td className="px-4 py-2">{format(new Date(project.created_at), 'dd-MM-yyyy')}</td>
-                                <td className="px-4 py-2">
+                                <td className="px-4 py-2 space-x-2 text-center">
                                     <button
                                         onClick={() => handleViewStaff(project)}
-                                        className="bg-blue-500 text-white px-2 py-1 rounded"
+                                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded transition duration-200"
                                     >
                                         View Staff
+                                    </button>
+                                    <button
+                                        onClick={() => handleViewMilestones(project.milestones)}
+                                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded transition duration-200"
+                                    >
+                                        View Milestones
+                                    </button>
+                                    <button
+                                        onClick={() => handleEditProject(project)}
+                                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded transition duration-200"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeleteProject(project.id)}
+                                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition duration-200"
+                                    >
+                                        Delete
                                     </button>
                                 </td>
                             </tr>
@@ -83,38 +104,42 @@ function ViewProjectsContainer() {
         let serialNumber = 0;
 
         return (
-            <table className="w-full border-collapse border border-gray-300">
+            <table className="w-full border-collapse border border-gray-300 shadow-sm">
                 <thead>
-                    <tr>
-                        <th className="px-4 py-2 bg-gray-200">Serial No</th>
-                        <th className="px-4 py-2 bg-gray-200">Project ID</th>
-                        <th className="px-4 py-2 bg-gray-200">Project Name</th>
-                        <th className="px-4 py-2 bg-gray-200">Client Name</th>
-                        <th className="px-4 py-2 bg-gray-200">Start Date</th>
-                        <th className="px-4 py-2 bg-gray-200">End Date</th>
-                        <th className="px-4 py-2 bg-gray-200">Hourly Limit</th>
-                        <th className="px-4 py-2 bg-gray-200">Created Date</th>
-                        <th className="px-4 py-2 bg-gray-200">View Staff</th>
+                    <tr className="bg-gray-200 text-gray-700">
+                        <th className="px-4 py-2 border">Serial No</th>
+                        <th className="px-4 py-2 border">Project Name</th>
+                        <th className="px-4 py-2 border">Client Name</th>
+                        <th className="px-4 py-2 border">Created Date</th>
+                        <th className="px-4 py-2 border">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {ProjectDetailsData && ProjectDetailsData.map((project, index) => (
                         project.project_type === 'Hourly' && (
-                            <tr key={index} className="border-b border-gray-200">
-                                <td className="px-4 py-2">{++serialNumber}</td>
-                                <td className="px-4 py-2">{project.id}</td>
+                            <tr key={index} className="border-b hover:bg-gray-100">
+                                <td className="px-4 py-2 text-center">{++serialNumber}</td>
                                 <td className="px-4 py-2">{project.project_name}</td>
                                 <td className="px-4 py-2">{project.client_name}</td>
-                                <td className="px-4 py-2">{format(new Date(project.hourly_start_time), 'dd-MM-yyyy')}</td>
-                                <td className="px-4 py-2">{format(new Date(project.hourly_end_time), 'dd-MM-yyyy')}</td>
-                                <td className="px-4 py-2">{project.hourly_project_limit}</td>
                                 <td className="px-4 py-2">{format(new Date(project.created_at), 'dd-MM-yyyy')}</td>
-                                <td className="px-4 py-2">
+                                <td className="px-4 py-2 space-x-2 text-center">
                                     <button
                                         onClick={() => handleViewStaff(project)}
-                                        className="bg-blue-500 text-white px-2 py-1 rounded"
+                                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded transition duration-200"
                                     >
                                         View Staff
+                                    </button>
+                                    <button
+                                        onClick={() => handleEditProject(project)}
+                                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded transition duration-200"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeleteProject(project.id)}
+                                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition duration-200"
+                                    >
+                                        Delete
                                     </button>
                                 </td>
                             </tr>
@@ -125,38 +150,61 @@ function ViewProjectsContainer() {
         );
     };
 
-    const renderStaffPopup = () => {
-        if (!selectedProject) return null;
+    const renderStaffDetails = () => (
+        <>
+            <p className="mb-2"><strong>Managers:</strong> {selectedProject.managers.map(manager => manager.name).join(', ')}</p>
+            <p className="mb-2"><strong>Team Leads:</strong> {selectedProject.team_lead.map(lead => lead.name).join(', ')}</p>
+            <p className="mb-2"><strong>Employees:</strong> {selectedProject.employee.map(emp => emp.name).join(', ')}</p>
+        </>
+    );
 
-        return (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white p-8 rounded-lg max-w-lg w-full">
-                    <h3 className="text-xl font-bold mb-4">Staff Details</h3>
-                    <p><strong>Managers:</strong> {selectedProject.managers.map(manager => manager.name).join(', ')}</p>
-                    <p><strong>Team Leads:</strong> {selectedProject.team_lead.map(lead => lead.name).join(', ')}</p>
-                    <p><strong>Employees:</strong> {selectedProject.employee.map(emp => emp.name).join(', ')}</p>
-                    <button
-                        onClick={closePopup}
-                        className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
-                    >
-                        Close
-                    </button>
-                </div>
-            </div>
-        );
-    };
+    const renderMilestoneDetails = () => (
+        <table className="w-full table-auto">
+            <thead>
+                <tr>
+                    <th className="px-4 py-2">Description</th>
+                    <th className="px-4 py-2">Status</th>
+                    <th className="px-4 py-2">Start Date</th>
+                    <th className="px-4 py-2">End Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {selectedMilestone.map((milestone, index) => (
+                    <tr key={index} className="border-b">
+                        <td className="px-4 py-2">{milestone.description}</td>
+                        <td className="px-4 py-2">{milestone.status}</td>
+                        <td className="px-4 py-2">{format(new Date(milestone.start_date), 'dd-MM-yyyy')}</td>
+                        <td className="px-4 py-2">{format(new Date(milestone.end_date), 'dd-MM-yyyy')}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
 
     return (
         <main className="container mx-auto px-4 py-8">
             <section className="mb-8">
-                <h2 className="text-xl font-bold mb-4">Fixed Type Projects</h2>
+                <h2 className="text-2xl font-bold mb-4">Fixed Type Projects</h2>
                 {renderFixedProjectTable()}
             </section>
-            <section>
-                <h2 className="text-xl font-bold mb-4">Hourly Type Projects</h2>
+            <section className="mb-8">
+                <h2 className="text-2xl font-bold mb-4">Hourly Type Projects</h2>
                 {renderHourlyProjectTable()}
             </section>
-            {isPopupOpen && renderStaffPopup()}
+            <PopUpComponent
+                isOpen={isPopupOpen}
+                onClose={closePopup}
+                title="Staff Details"
+            >
+                {selectedProject && renderStaffDetails()}
+            </PopUpComponent>
+            <PopUpComponent
+                isOpen={isMilestonePopupOpen}
+                onClose={closeMilestonePopup}
+                title="Milestone Details"
+            >
+                {selectedMilestone && renderMilestoneDetails()}
+            </PopUpComponent>
         </main>
     );
 }

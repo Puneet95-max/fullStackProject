@@ -1,11 +1,11 @@
 "use client"
 import React, { useContext, useState } from 'react'
 import { HiEye, HiEyeOff } from 'react-icons/hi';
-import { ProjectDetailsContext } from '@/contexts/ProjectDetailsContext';
+import { UserDetailContext } from '@/contexts/UserDetailsContext';
 
 function LoginPageContainer() {
 
-    const { loginAPI } = useContext(ProjectDetailsContext);
+    const { loginAPI } = useContext(UserDetailContext);
 
     const [formData, setFormData] = useState({ Email: "", Password: "" });
     const [showPassword, setShowPassword] = useState(false);
