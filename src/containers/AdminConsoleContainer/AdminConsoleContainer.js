@@ -1,10 +1,11 @@
 "use client"
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import AddProjectContainer from '../AddProjectContainer/AddProjectContainer';
 import ViewProjectsConatainer from '../ViewProjectsContainer/ViewProjectsConatainer';
 import Link from 'next/link'
 import AddStaffContainer from '../AddStaffContainer/AddStaffContainer';
 import ReportContainer from '../ReportContainer./ReportContainer';
+import { UserDetailContext } from '@/contexts/UserDetailsContext';
 
 function AdminConsoleContainer({ id }) {
     const [selectedId, setSelectedId] = useState(id);
@@ -13,11 +14,15 @@ function AdminConsoleContainer({ id }) {
     useEffect(() => {
         const userData = sessionStorage.getItem('userData');
         if (userData) {
-          const parsedUserData = JSON.parse(userData);
-          const userID = parsedUserData.user.id;
-          setUserID(userID);
+            const parsedUserData = JSON.parse(userData);
+            const userID = parsedUserData.user.id;
+            setUserID(userID);
         }
-      }, []);
+    }, []);
+
+    const { userRoleData } = useContext(UserDetailContext);
+
+    console.log("userRoleData" , userRoleData)
 
     return (
         <main className="h-screen w-full flex">
@@ -52,6 +57,14 @@ function AdminConsoleContainer({ id }) {
                         Send Report
                     </div>
                 </Link>
+                <Link href='/profile'>
+                    <div
+                        className={`py-4 flex justify-center cursor-pointer ${selectedId === 5 ? 'bg-white text-blue-500' : ''}`}
+                    >
+                        Profile
+                    </div>
+                </Link>
+
 
             </div>
 
@@ -72,6 +85,7 @@ function AdminConsoleContainer({ id }) {
                     selectedId === 4 &&
                     <ReportContainer id={userId} />
                 }
+
             </div>
         </main>
     );

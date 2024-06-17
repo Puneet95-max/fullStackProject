@@ -16,13 +16,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <ProtectedRoute>
-        <UserDetailsContextProvider>
-          <StaffDetailsContextProvider>
-            <ProjectDetailsContextProvider>
-              <body className={inter.className}>{children}</body>
-            </ProjectDetailsContextProvider>
-          </StaffDetailsContextProvider>
-        </UserDetailsContextProvider>
+          <UserDetailsContextProvider>
+            <StaffDetailsContextProvider>
+              <ProjectDetailsContextProvider>
+                <body className={inter.className}>{children}</body>
+              </ProjectDetailsContextProvider>
+            </StaffDetailsContextProvider>
+          </UserDetailsContextProvider>
       </ProtectedRoute>
     </html>
   );
