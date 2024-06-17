@@ -1,18 +1,52 @@
+"use client"
 import React, { useContext, useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { ProjectDetailsContext } from '@/contexts/ProjectDetailsContext';
 import PopUpComponent from '@/components/PopUpComponent/PopUpComponent';
+import { UserDetailContext } from '@/contexts/UserDetailsContext';
 
 function ViewProjectsContainer() {
     const { GetProjectDetails, ProjectDetailsData } = useContext(ProjectDetailsContext);
+    const { GetUserRoleAPI, userRoleData } = useContext(UserDetailContext);
+
     const [selectedProject, setSelectedProject] = useState(null);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedMilestone, setSelectedMilestone] = useState(null);
     const [isMilestonePopupOpen, setIsMilestonePopupOpen] = useState(false);
 
+    const [canEdit, setCanEdit] = useState(false);
+    const [canDelete, setCanDelete] = useState(false);
+
     useEffect(() => {
         GetProjectDetails();
     }, []);
+
+    useEffect(() => {
+        const storedUserData = sessionStorage.getItem('userData');
+        if (storedUserData) {
+            const parsedUserData = JSON.parse(storedUserData);
+            GetUserRoleAPI(parsedUserData.user.id);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (userRoleData && userRoleData.role && Array.isArray(userRoleData.role.permissions)) {
+            const permissions = userRoleData.role.permissions;
+            const editPermission = permissions.some(
+                permission => permission.action === 'edit' && permission.subject === 'project'
+            );
+            const deletePermission = permissions.some(
+                permission => permission.action === 'delete' && permission.subject === 'project'
+            );
+
+            setCanEdit(editPermission);
+            setCanDelete(deletePermission);
+        } else {
+            setCanEdit(false);
+            setCanDelete(false);
+        }
+    }, [userRoleData]);
+
 
     const handleViewStaff = (project) => {
         setSelectedProject(project);
@@ -25,12 +59,10 @@ function ViewProjectsContainer() {
     };
 
     const handleEditProject = (project) => {
-        // Handle edit project logic here
         console.log('Edit project:', project);
     };
 
     const handleDeleteProject = (projectId) => {
-        // Handle delete project logic here
         console.log('Delete project with id:', projectId);
     };
 
@@ -79,18 +111,22 @@ function ViewProjectsContainer() {
                                     >
                                         View Milestones
                                     </button>
-                                    <button
-                                        onClick={() => handleEditProject(project)}
-                                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded transition duration-200"
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        onClick={() => handleDeleteProject(project.id)}
-                                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition duration-200"
-                                    >
-                                        Delete
-                                    </button>
+                                    {canEdit && (
+                                        <button
+                                            onClick={() => handleEditProject(project)}
+                                            className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded transition duration-200"
+                                        >
+                                            Edit
+                                        </button>
+                                    )}
+                                    {canDelete && (
+                                        <button
+                                            onClick={() => handleDeleteProject(project.id)}
+                                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition duration-200"
+                                        >
+                                            Delete
+                                        </button>
+                                    )}
                                 </td>
                             </tr>
                         )
@@ -129,18 +165,23 @@ function ViewProjectsContainer() {
                                     >
                                         View Staff
                                     </button>
-                                    <button
-                                        onClick={() => handleEditProject(project)}
-                                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded transition duration-200"
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        onClick={() => handleDeleteProject(project.id)}
-                                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition duration-200"
-                                    >
-                                        Delete
-                                    </button>
+                                   
+                                    {canEdit && (
+                                        <button
+                                            onClick={() => handleEditProject(project)}
+                                            className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded transition duration-200"
+                                        >
+                                            Edit
+                                        </button>
+                                    )}
+                                    {canDelete && (
+                                        <button
+                                            onClick={() => handleDeleteProject(project.id)}
+                                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition duration-200"
+                                        >
+                                            Delete
+                                        </button>
+                                    )}
                                 </td>
                             </tr>
                         )
