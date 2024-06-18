@@ -1,7 +1,8 @@
 import AdminConsoleContainer from '@/containers/AdminConsoleContainer/AdminConsoleContainer'
+import PermissionContainer from '@/containers/PermissionContainer/PermissionContainer'
 import React from 'react'
 
-function Profile() {
+function UserPermission() {
     return (
         <main>
             <AdminConsoleContainer />
@@ -9,4 +10,4 @@ function Profile() {
     )
 }
 
-export default Profile
+export default UserPermission

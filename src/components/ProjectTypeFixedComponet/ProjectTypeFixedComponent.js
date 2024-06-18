@@ -4,18 +4,18 @@ import StartDateAndEndDateComponent from '../StartDateAndEndDateComponent/StartD
 import { ProjectDetailsContext } from '@/contexts/ProjectDetailsContext';
 import { format } from 'date-fns';
 
-const ProjectTypeFixedComponent = ({ Pname, Cname, manager, Ptype, teamLeads, employees }) => {
-  const [items, setItems] = useState([{ description: '', start_date: null, end_date: null, status: '' }]);
+const ProjectTypeFixedComponent = ({ Pname, Cname, manager, Ptype, teamLeads, employees, milestones, editProject }) => {
+  const [items, setItems] = useState(milestones || [{ description: '', start_date: null, end_date: null, status: '' }]);
   const {
     milstoneStatusData,
     GetMilstoneOptionsData,
     CreateProject,
+    UpdateProjectAPI,
   } = useContext(ProjectDetailsContext);
-
 
   useEffect(() => {
     GetMilstoneOptionsData();
-  }, [])
+  }, []);
 
   const addMoreFields = () => {
     setItems([...items, { description: '', start_date: null, end_date: null, status: '' }]);
@@ -51,18 +51,28 @@ const ProjectTypeFixedComponent = ({ Pname, Cname, manager, Ptype, teamLeads, em
   };
 
   const handleSave = () => {
+    const formattedItems = items.map(item => ({
+      ...item,
+      start_date: item.start_date ? format(new Date(item.start_date), 'yyyy-MM-dd') : null,
+      end_date: item.end_date ? format(new Date(item.end_date), 'yyyy-MM-dd') : null,
+    }));
+
     const data = {
       project_name: Pname,
       client_name: Cname,
-      milestones: items,
+      milestones: formattedItems,
       managers: manager,
       project_type: Ptype,
       employee: employees,
-      team_lead: teamLeads
+      team_lead: teamLeads,
     };
-    CreateProject(data);
-  };
 
+    if (editProject) {
+      UpdateProjectAPI(editProject.id, data);
+    } else {
+      CreateProject(data);
+    }
+  };
 
   return (
     <main className="container mx-auto px-4 py-8">

@@ -1,12 +1,18 @@
-"use client"
+// ViewProjectsContainer.js
 import React, { useContext, useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { ProjectDetailsContext } from '@/contexts/ProjectDetailsContext';
 import PopUpComponent from '@/components/PopUpComponent/PopUpComponent';
 import { UserDetailContext } from '@/contexts/UserDetailsContext';
+import DeleteConfirmationPopup from '@/components/DeleteConfirmationPopup/DeleteConfirmationPopup';
+import Link from 'next/link'
+import { useRouter } from 'next/navigation';
 
 function ViewProjectsContainer() {
-    const { GetProjectDetails, ProjectDetailsData } = useContext(ProjectDetailsContext);
+
+    const router = useRouter();
+
+    const { GetProjectDetails, ProjectDetailsData, DeleteProjectAPI, setEditProject } = useContext(ProjectDetailsContext);
     const { GetUserRoleAPI, userRoleData } = useContext(UserDetailContext);
 
     const [selectedProject, setSelectedProject] = useState(null);
@@ -16,6 +22,9 @@ function ViewProjectsContainer() {
 
     const [canEdit, setCanEdit] = useState(false);
     const [canDelete, setCanDelete] = useState(false);
+
+    const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+    const [projectToDelete, setProjectToDelete] = useState(null);
 
     useEffect(() => {
         GetProjectDetails();
@@ -47,7 +56,6 @@ function ViewProjectsContainer() {
         }
     }, [userRoleData]);
 
-
     const handleViewStaff = (project) => {
         setSelectedProject(project);
         setIsPopupOpen(true);
@@ -59,11 +67,29 @@ function ViewProjectsContainer() {
     };
 
     const handleEditProject = (project) => {
-        console.log('Edit project:', project);
+        setEditProject(project);
+        router.push('/edit-project');
+    };
+
+    const handleSaveEditedProject = (editedProject) => {
+        console.log('Save edited project:', editedProject);
+        // Perform API call to update project data
+        // Example: UpdateProjectAPI(editedProject);
+        // Close edit pop-up
+        setEditProject(null);
     };
 
     const handleDeleteProject = (projectId) => {
-        console.log('Delete project with id:', projectId);
+        setProjectToDelete(projectId);
+        setIsDeletePopupOpen(true);
+    };
+
+    const confirmDeleteProject = () => {
+        if (projectToDelete) {
+            DeleteProjectAPI(projectToDelete);
+            setIsDeletePopupOpen(false);
+            setProjectToDelete(null);
+        }
     };
 
     const closePopup = () => {
@@ -74,6 +100,11 @@ function ViewProjectsContainer() {
     const closeMilestonePopup = () => {
         setIsMilestonePopupOpen(false);
         setSelectedMilestone(null);
+    };
+
+    const closeDeletePopup = () => {
+        setIsDeletePopupOpen(false);
+        setProjectToDelete(null);
     };
 
     const renderFixedProjectTable = () => {
@@ -165,14 +196,16 @@ function ViewProjectsContainer() {
                                     >
                                         View Staff
                                     </button>
-                                   
                                     {canEdit && (
-                                        <button
-                                            onClick={() => handleEditProject(project)}
-                                            className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded transition duration-200"
-                                        >
-                                            Edit
-                                        </button>
+                                        <Link href={'/edit-project'} >
+                                            <button
+                                                onClick={() => handleEditProject(project)}
+                                                className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded transition duration-200"
+                                            >
+                                                Edit
+                                            </button>
+                                        </Link>
+
                                     )}
                                     {canDelete && (
                                         <button
@@ -246,6 +279,11 @@ function ViewProjectsContainer() {
             >
                 {selectedMilestone && renderMilestoneDetails()}
             </PopUpComponent>
+            <DeleteConfirmationPopup
+                isOpen={isDeletePopupOpen}
+                onClose={closeDeletePopup}
+                onConfirm={confirmDeleteProject}
+            />
         </main>
     );
 }

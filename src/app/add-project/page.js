@@ -1,12 +1,12 @@
 import AdminConsoleContainer from '@/containers/AdminConsoleContainer/AdminConsoleContainer'
 import React from 'react'
 
-function AddStaff() {
+function AdminConsolePage() {
     return (
         <main>
-            <AdminConsoleContainer id={3} />
+            <AdminConsoleContainer />
         </main>
     )
 }
 
-export default AddStaff
+export default AdminConsolePage
