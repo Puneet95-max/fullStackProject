@@ -4,6 +4,7 @@ import ProjectDetailsContextProvider from "@/contexts/ProjectDetailsContext";
 import StaffDetailsContextProvider from "@/contexts/StaffDetailsContext";
 import ProtectedRoute from "@/ProtectedRoutes/ProtectedRoutes";
 import UserDetailsContextProvider from "@/contexts/UserDetailsContext";
+import RolesAndPermissionContextProvider  from "@/contexts/RolesAndPermissioContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,6 +17,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <ProtectedRoute>
+        <RolesAndPermissionContextProvider>
           <UserDetailsContextProvider>
             <StaffDetailsContextProvider>
               <ProjectDetailsContextProvider>
@@ -23,6 +25,7 @@ export default function RootLayout({ children }) {
               </ProjectDetailsContextProvider>
             </StaffDetailsContextProvider>
           </UserDetailsContextProvider>
+        </RolesAndPermissionContextProvider>
       </ProtectedRoute>
     </html>
   );

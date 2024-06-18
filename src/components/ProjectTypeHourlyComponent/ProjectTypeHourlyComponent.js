@@ -4,12 +4,14 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { ProjectDetailsContext } from '@/contexts/ProjectDetailsContext';
 import { format } from 'date-fns';
 
-const ProjectTypeHourlyComponent = ({ Pname, Cname, Ptype, manager , teamLeads , employees}) => {
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
-    const [hourlyLimit, setHourlyLimit] = useState('');
+const ProjectTypeHourlyComponent = ({ Pname, Cname, Ptype, manager, teamLeads, employees, hourlyProjectLimit,
+    hourlyStartTime, hourlyEndTime }) => {
 
-    const { hData, setHData, CreateProject } = useContext(ProjectDetailsContext);
+    const [startDate, setStartDate] = useState(hourlyStartTime || null);
+    const [endDate, setEndDate] = useState(hourlyEndTime || null);
+    const [hourlyLimit, setHourlyLimit] = useState(hourlyProjectLimit || " ");
+
+    const { hData, setHData, CreateProject , UpdateProjectAPI , editProject } = useContext(ProjectDetailsContext);
 
     const handleStartDateChange = (date) => {
         setStartDate(date);
@@ -36,9 +38,16 @@ const ProjectTypeHourlyComponent = ({ Pname, Cname, Ptype, manager , teamLeads ,
             employee: employees,
             team_lead: teamLeads,
         };
-        CreateProject(data);
+    
+        if (editProject) {
+            // Call update API if editProject exists
+            UpdateProjectAPI(editProject.id, data);
+        } else {
+            // Call create API if editProject does not exist
+            CreateProject(data);
+        }
     };
-
+    
     return (
         <div className="container mx-auto p-6 border-2">
             <h2 className="text-lg font-semibold mb-4">Project Type: Hourly</h2>

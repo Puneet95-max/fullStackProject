@@ -1,12 +1,12 @@
 import AdminConsoleContainer from '@/containers/AdminConsoleContainer/AdminConsoleContainer'
 import React from 'react'
 
-function Profile() {
+function AdminConsolePage() {
     return (
         <main>
-            <AdminConsoleContainer />
+            <AdminConsoleContainer  />
         </main>
     )
 }
 
-export default Profile
+export default AdminConsolePage

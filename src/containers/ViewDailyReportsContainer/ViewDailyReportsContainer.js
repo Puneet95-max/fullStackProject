@@ -35,21 +35,25 @@ function ViewDailyReportsContainer() {
                     {Object.keys(groupedReports).map((date) => (
                         <div key={date} className="mb-8">
                             <div className="bg-white p-6 rounded-lg shadow-lg">
-                                <div className="mb-4 text-gray-500 text-sm">
-                                    <span className="font-medium text-blue-600">Date:</span> {date}
-                                </div>
-                                <div className="grid grid-cols-1 gap-6">
-                                    {groupedReports[date].map((report) => (
-                                        <div key={report.id} className="p-4 border-b last:border-0">
-                                            <div className="text-2xl font-bold mb-2 text-blue-700">Project: {report.project_name}</div>
-                                            <div className="text-xl font-semibold mb-2">Task: {report.task}</div>
-                                            <div className="text-gray-700 mb-4">Description: {report.description}</div>
-                                            <div className={`mb-2 ${report.status === 'Complete' ? 'text-green-600' : 'text-yellow-600'}`}>
-                                                <span className="font-medium">Status:</span> {report.status}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                                <table className="min-w-full">
+                                    <thead>
+                                        <tr className="border-b">
+                                            <th className="py-2 px-4 text-left text-blue-600 font-medium">Date: {date}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {groupedReports[date].map((report) => (
+                                            <tr key={report.id} className="border-b">
+                                                <td className="py-4 px-6 text-blue-700 font-semibold">Project: {report.project_name}</td>
+                                                <td className="py-4 px-6 text-blue-700 font-semibold">Task: {report.task}</td>
+                                                <td className="py-4 px-6 text-gray-700">Description: {report.description}</td>
+                                                <td className={`py-4 px-6 ${report.status === 'Complete' ? 'text-green-600' : 'text-yellow-600'}`}>
+                                                    Status: {report.status}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     ))}

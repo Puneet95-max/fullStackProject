@@ -1,12 +1,12 @@
 import AdminConsoleContainer from '@/containers/AdminConsoleContainer/AdminConsoleContainer'
 import React from 'react'
 
-function AdminConsolePage() {
+function RegisterUser() {
     return (
         <main>
-            <AdminConsoleContainer id={2} />
+            <AdminConsoleContainer />
         </main>
     )
 }
 
-export default AdminConsolePage
+export default RegisterUser

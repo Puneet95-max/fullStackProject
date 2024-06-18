@@ -10,6 +10,7 @@ const initialState = {
     managersDetails: null,
     projectTypeDetails: null,
     milstoneStatusData: null,
+    editProject: null,
     setFData: () => { },
     GetProjectDetails: () => { },
     setHData: () => { },
@@ -20,6 +21,9 @@ const initialState = {
     setMilstoneStatusData: () => { },
     GetMilstoneOptionsData: () => { },
     CreateProject: (data) => { },
+    DeleteProjectAPI: (id) => { },
+    setEditProject: () => { },
+    UpdateProjectAPI: (id) => { }
 }
 
 export const ProjectDetailsContext = createContext(initialState);
@@ -33,6 +37,7 @@ export default function ProjectDetailsContextProvider({ children }) {
     const [managersDetails, setManagersDetails] = useState(initialState.managersDetails);
     const [projectTypeDetails, setProjeectTypeDetails] = useState(initialState.projectTypeDetails);
     const [milstoneStatusData, setMilstoneStatusData] = useState(initialState.milstoneStatusData);
+    const [editProject, setEditProject] = useState(initialState.editProject);
 
     const GetProjectDetails = async () => {
         const url = 'http://127.0.0.1:8000/api/details/';
@@ -125,7 +130,7 @@ export default function ProjectDetailsContextProvider({ children }) {
             const data = response.data;
             if (response.status === 201) {
                 alert(data.message);
-                router.push('/admin-console/view-projects')
+                router.push('/view-projects')
             }
             return data
         } catch (error) {
@@ -134,6 +139,38 @@ export default function ProjectDetailsContextProvider({ children }) {
         }
     };
 
+    const DeleteProjectAPI = async (id) => {
+        const url = `http://127.0.0.1:8000/api/project/${id}`;
+        try {
+            const response = await axios.delete(url);
+
+            const data = response.data;
+            if (response.status === 204) {
+                alert(data.message);
+                window.location.reload();  // Refresh the screen\
+            }
+        } catch (error) {
+            console.error('Error posting manager details:', error);
+            throw error; // Re-throw the error to handle it outside of this function if needed
+        }
+    };
+
+    const UpdateProjectAPI = async (id , data) => {
+        const url = `http://127.0.0.1:8000/api/project/${id}/`;
+        const x = data;
+        try {
+            const response = await axios.put(url , x);
+
+            const data = response.data;
+            if (response.status === 200) {
+                alert(data.message);
+                window.location.reload();  // Refresh the screen\
+            }
+        } catch (error) {
+            console.error('Error posting manager details:', error);
+            throw error; // Re-throw the error to handle it outside of this function if needed
+        }
+    }
 
     return (
         <ProjectDetailsContext.Provider
@@ -144,6 +181,7 @@ export default function ProjectDetailsContextProvider({ children }) {
                 managersDetails,
                 projectTypeDetails,
                 milstoneStatusData,
+                editProject,
                 setFData,
                 setHData,
                 GetProjectDetails,
@@ -152,6 +190,9 @@ export default function ProjectDetailsContextProvider({ children }) {
                 setMilstoneStatusData,
                 GetMilstoneOptionsData,
                 CreateProject,
+                DeleteProjectAPI,
+                setEditProject,
+                UpdateProjectAPI,
             }}
         >
             {children}
