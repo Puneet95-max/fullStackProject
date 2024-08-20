@@ -83,12 +83,12 @@ const PermissionContainer = () => {
                     </div>
                     {
                       (userRole === 'admin' || userRole === 'manager') && <div className="flex justify-end">
-                            <button
+                            {/* <button
                                 onClick={() => handleAddNewClick(role.name)}
                                 className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mr-2"
                             >
                                 Add New
-                            </button>
+                            </button> */}
                             {/* <button className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">
                                 Delete
                             </button> */}
